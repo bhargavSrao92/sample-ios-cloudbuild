@@ -1,0 +1,17 @@
+steps:
+  - name: 'macos-builder-image'
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        xcodebuild clean         -project MySampleApp.xcodeproj         -scheme MySampleApp
+
+        xcodebuild archive         -project MySampleApp.xcodeproj         -scheme MySampleApp         -archivePath build/MySampleApp.xcarchive
+
+        xcodebuild -exportArchive         -archivePath build/MySampleApp.xcarchive         -exportPath build/output         -exportOptionsPlist ExportOptions.plist
+
+artifacts:
+  objects:
+    location: gs://YOUR_BUCKET/builds/
+    paths:
+      - build/output/*.ipa
