@@ -1,38 +1,27 @@
-name: Build iOS IPA
+steps:
+  - name: 'ubuntu'
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        echo "===== Build Started ====="
 
-on:
-  push:
-    branches:
-      - main
+        pwd
 
-jobs:
-  build:
-    runs-on: macos-latest
+        echo "===== Repository Contents ====="
+        ls -la
 
-    steps:
-      - uses: actions/checkout@v4
+        mkdir -p build/output
 
-      - name: Install CocoaPods
-        run: |
-          pod install
+        echo "Sample build successful" > build/output/build-status.txt
 
-      - name: Build Archive
-        run: |
-          xcodebuild archive \
-          -workspace MySampleApp.xcworkspace \
-          -scheme MySampleApp \
-          -configuration Release \
-          -archivePath build/MySampleApp.xcarchive
+        echo "===== Build Complete ====="
 
-      - name: Export IPA
-        run: |
-          xcodebuild -exportArchive \
-          -archivePath build/MySampleApp.xcarchive \
-          -exportOptionsPlist ExportOptions.plist \
-          -exportPath build/output
+options:
+  logging: CLOUD_LOGGING_ONLY
 
-      - name: Upload IPA
-        uses: actions/upload-artifact@v4
-        with:
-          name: ios-ipa
-          path: build/output/*.ipa
+artifacts:
+  objects:
+    location: gs://my-ios-build-artifacts/builds/
+    paths:
+      - build/output/*
