@@ -1,0 +1,37 @@
+name: Build iOS IPA
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Pods
+        run: pod install
+
+      - name: Build Archive
+        run: |
+          xcodebuild archive \
+          -workspace MySampleApp.xcworkspace \
+          -scheme MySampleApp \
+          -configuration Release \
+          -archivePath build/MySampleApp.xcarchive
+
+      - name: Export IPA
+        run: |
+          xcodebuild -exportArchive \
+          -archivePath build/MySampleApp.xcarchive \
+          -exportOptionsPlist ExportOptions.plist \
+          -exportPath build/output
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-ipa
+          path: build/output/*.ipa
