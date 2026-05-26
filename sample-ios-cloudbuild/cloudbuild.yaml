@@ -23,6 +23,6 @@ options:
 
 artifacts:
   objects:
-    location: gs://YOUR_BUCKET/builds/
+    location: gs://my-ios-build-artifacts/builds/
     paths:
       - build/output/*.ipa
