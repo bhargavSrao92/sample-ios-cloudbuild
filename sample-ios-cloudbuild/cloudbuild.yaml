@@ -1,40 +1,31 @@
 steps:
-  - name: 'gcr.io/cloud-builders/git'
-    id: 'Fetch Source'
-
   - name: 'macos-xcode-runner'
-    id: 'Build IPA'
     entrypoint: bash
     args:
       - -c
       - |
-        echo "Installing pods"
-        pod install
-
-        echo "Cleaning project"
         xcodebuild clean \
         -workspace MySampleApp.xcworkspace \
         -scheme MySampleApp
 
-        echo "Creating archive"
         xcodebuild archive \
         -workspace MySampleApp.xcworkspace \
         -scheme MySampleApp \
         -configuration Release \
         -archivePath build/MySampleApp.xcarchive
 
-        echo "Exporting IPA"
         xcodebuild -exportArchive \
         -archivePath build/MySampleApp.xcarchive \
         -exportOptionsPlist ExportOptions.plist \
         -exportPath build/output
-
-        ls -la build/output
 
 artifacts:
   objects:
     location: gs://my-ios-build-artifacts/builds/
     paths:
       - build/output/*.ipa
+
+options:
+  logging: CLOUD_LOGGING_ONLY
 
 timeout: 3600s
