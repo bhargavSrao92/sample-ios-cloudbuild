@@ -1,31 +1,38 @@
-steps:
-  - name: 'macos-xcode-runner'
-    entrypoint: bash
-    args:
-      - -c
-      - |
-        xcodebuild clean \
-        -workspace MySampleApp.xcworkspace \
-        -scheme MySampleApp
+name: Build iOS IPA
 
-        xcodebuild archive \
-        -workspace MySampleApp.xcworkspace \
-        -scheme MySampleApp \
-        -configuration Release \
-        -archivePath build/MySampleApp.xcarchive
+on:
+  push:
+    branches:
+      - main
 
-        xcodebuild -exportArchive \
-        -archivePath build/MySampleApp.xcarchive \
-        -exportOptionsPlist ExportOptions.plist \
-        -exportPath build/output
+jobs:
+  build:
+    runs-on: macos-latest
 
-artifacts:
-  objects:
-    location: gs://my-ios-build-artifacts/builds/
-    paths:
-      - build/output/*.ipa
+    steps:
+      - uses: actions/checkout@v4
 
-options:
-  logging: CLOUD_LOGGING_ONLY
+      - name: Install CocoaPods
+        run: |
+          pod install
 
-timeout: 3600s
+      - name: Build Archive
+        run: |
+          xcodebuild archive \
+          -workspace MySampleApp.xcworkspace \
+          -scheme MySampleApp \
+          -configuration Release \
+          -archivePath build/MySampleApp.xcarchive
+
+      - name: Export IPA
+        run: |
+          xcodebuild -exportArchive \
+          -archivePath build/MySampleApp.xcarchive \
+          -exportOptionsPlist ExportOptions.plist \
+          -exportPath build/output
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-ipa
+          path: build/output/*.ipa
