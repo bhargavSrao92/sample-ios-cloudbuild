@@ -4,11 +4,22 @@ steps:
     args:
       - -c
       - |
-        xcodebuild clean         -project MySampleApp.xcodeproj         -scheme MySampleApp
+        xcodebuild clean \
+        -project MySampleApp.xcodeproj \
+        -scheme MySampleApp
 
-        xcodebuild archive         -project MySampleApp.xcodeproj         -scheme MySampleApp         -archivePath build/MySampleApp.xcarchive
+        xcodebuild archive \
+        -project MySampleApp.xcodeproj \
+        -scheme MySampleApp \
+        -archivePath build/MySampleApp.xcarchive
 
-        xcodebuild -exportArchive         -archivePath build/MySampleApp.xcarchive         -exportPath build/output         -exportOptionsPlist ExportOptions.plist
+        xcodebuild -exportArchive \
+        -archivePath build/MySampleApp.xcarchive \
+        -exportPath build/output \
+        -exportOptionsPlist ExportOptions.plist
+
+options:
+  logging: CLOUD_LOGGING_ONLY
 
 artifacts:
   objects:
