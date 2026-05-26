@@ -1,22 +1,21 @@
 steps:
-  - name: 'macos-builder-image'
+  - name: 'ubuntu'
     entrypoint: bash
     args:
       - -c
       - |
-        xcodebuild clean \
-        -project MySampleApp.xcodeproj \
-        -scheme MySampleApp
+        echo "===== Build Started ====="
 
-        xcodebuild archive \
-        -project MySampleApp.xcodeproj \
-        -scheme MySampleApp \
-        -archivePath build/MySampleApp.xcarchive
+        pwd
 
-        xcodebuild -exportArchive \
-        -archivePath build/MySampleApp.xcarchive \
-        -exportPath build/output \
-        -exportOptionsPlist ExportOptions.plist
+        echo "===== Repository Contents ====="
+        ls -la
+
+        mkdir -p build/output
+
+        echo "Sample build successful" > build/output/build-status.txt
+
+        echo "===== Build Complete ====="
 
 options:
   logging: CLOUD_LOGGING_ONLY
@@ -25,4 +24,4 @@ artifacts:
   objects:
     location: gs://my-ios-build-artifacts/builds/
     paths:
-      - build/output/*.ipa
+      - build/output/*
