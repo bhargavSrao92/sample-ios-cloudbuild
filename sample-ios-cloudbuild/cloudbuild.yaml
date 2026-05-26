@@ -1,0 +1,21 @@
+steps:
+  - name: 'ubuntu'
+    id: 'Prepare Build'
+    entrypoint: bash
+    args:
+      - scripts/prepare-build.sh
+
+  - name: 'ubuntu'
+    id: 'Trigger Mac Build'
+    entrypoint: bash
+    args:
+      - scripts/build-ios.sh
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+artifacts:
+  objects:
+    location: gs://my-ios-build-artifacts/builds/
+    paths:
+      - output/*

@@ -1,0 +1,1 @@
+Sample Google Cloud Build + Mac build orchestration structure for iOS IPA generation.
